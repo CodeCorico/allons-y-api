@@ -1,6 +1,9 @@
 'use strict';
 
-module.exports = ['$allonsy', '$server', function($allonsy, $server) {
+module.exports = function($allonsy, $server) {
+  if (process.env.API && process.env.API == 'false') {
+    return;
+  }
 
   var path = require('path'),
       apiFiles = $allonsy.findInFeaturesSync('controllers/*-api.js');
@@ -97,9 +100,7 @@ module.exports = ['$allonsy', '$server', function($allonsy, $server) {
               },
 
               $done: function() {
-                return function() {
-
-                };
+                return function() { };
               }
             }
           });
@@ -109,12 +110,10 @@ module.exports = ['$allonsy', '$server', function($allonsy, $server) {
   });
 
   $server.all('/api/*', function(req, res) {
-
     res
       .status(404)
       .json({
         error: 'Not found'
       });
-
   });
-}];
+};
