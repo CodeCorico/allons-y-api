@@ -1,0 +1,8 @@
+{
+  "env": [{
+    "type": "confirm",
+    "name": "API",
+    "message": "Enable Express API:",
+    "when": "EXPRESS=true"
+  }]
+}
