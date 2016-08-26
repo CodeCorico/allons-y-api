@@ -60,6 +60,10 @@ module.exports = function($allonsy, $server) {
     };
 
     configs.forEach(function(config) {
+      if (!config) {
+        return;
+      }
+
       if (!config.method) {
         config.method = ['get'];
       }
