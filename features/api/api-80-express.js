@@ -6,7 +6,26 @@ module.exports = function($allonsy, $server) {
   }
 
   var path = require('path'),
-      apiFiles = $allonsy.findInFeaturesSync('controllers/*-api.js');
+      apiFiles = $allonsy.findInFeaturesSync('controllers/*-api.js'),
+      apiFilters = [];
+
+  $server.apiFilter = function(func) {
+    if (apiFilters.indexOf(func) > -1) {
+      return;
+    }
+
+    apiFilters.push(func);
+  };
+
+  $server.removeApiFilter = function(func) {
+    var index = apiFilters.indexOf(func);
+
+    if (index < 0) {
+      return;
+    }
+
+    apiFilters.splice(index, 1);
+  };
 
   apiFiles.forEach(function(file) {
     var configs = require(path.resolve(file));
@@ -75,15 +94,11 @@ module.exports = function($allonsy, $server) {
         method = (method || 'get').toLowerCase();
 
         $server[method]('/api/' + config.url, function(req, res, next) {
-          // if (config.isMember && (!req.user || !req.user.id)) {
-          //   return res.sendStatus(403);
-          // }
-
-          // if (config.permissions && config.permissions.length) {
-          //   if (!req.user || !req.user.id || !req.user.hasPermissions(config.permissions)) {
-          //     return res.sendStatus(403);
-          //   }
-          // }
+          for (var i = 0; i < apiFilters.length; i++) {
+            if (!apiFilters(req, res, config)) {
+              return;
+            }
+          }
 
           DependencyInjection.injector.controller.invoke(new ApiEvent(), config.controller, {
             controller: {
