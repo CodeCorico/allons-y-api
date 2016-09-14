@@ -95,7 +95,7 @@ module.exports = function($allonsy, $server) {
 
         $server[method]('/api/' + config.url, function(req, res, next) {
           for (var i = 0; i < apiFilters.length; i++) {
-            if (!apiFilters(req, res, config)) {
+            if (!apiFilters[i](req, res, config)) {
               return;
             }
           }
