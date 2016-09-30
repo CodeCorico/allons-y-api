@@ -30,6 +30,10 @@ module.exports = function($allonsy, $server) {
   apiFiles.forEach(function(file) {
     var configs = require(path.resolve(file));
 
+    if (!configs) {
+      return;
+    }
+
     if (!Array.isArray(configs)) {
       configs = [configs];
     }
